@@ -7,10 +7,65 @@ url de ejemplo: [https://api.coincap.io/v2/assets/bitcoin](https://api.coincap.i
 Esta lista se guarda en el `localStorage` del navegador con el nombre `favorites`.
 Se puede guardar solo el id de la criptomoneda o el objeto completo */
 
-function Coins() {
- return (
-    <></>
- )
-}
+import React from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
+function Coins() {
+   const { id } = useParams()
+   const [coin, setCoin] = useState(null)
+   const [favorite, setFavorite] = useState(false)
+
+   useEffect(() => {
+      const storedFavorite = JSON.parse(localStorage.getItem('favorites')) || []
+      if (storedFavorite.includes(id)) {
+         setFavorite(true)
+      }
+   })
+
+   useEffect(() => {
+      const coinFetch = async () => {
+         try {
+            const response = await fetch(`https://api.coincap.io/v2/assets/${id}`)
+            if (!response.ok) {
+               throw new Error("Error al conectar con el API")               
+            }
+            const data = await response.json()
+            setCoin(data.data)
+         } catch (error) {
+            console.error(`Error en la conexión`, error)            
+         }
+      }      
+      coinFetch()
+   }, [id])
+
+   if (!coin) return <p>La información no está disponible</p>
+
+   const handleFavoriteBtn = () => {
+      let storedFavorite = JSON.parse(localStorage.getItem('favorites')) || []
+      if (favorite) {
+         storedFavorite = storedFavorite.filter((favId) => favId !== id)
+         setFavorite(false)
+      } else {
+         storedFavorite.push(id)
+         setFavorite(true)
+      }
+      localStorage.setItem('favorites', JSON.stringify(storedFavorite))
+   }
+   
+   return (
+      <>
+         <h1>{coin.name} ({coin.symbol})</h1>
+         <p>Rank: {coin.rank}</p>
+         <p>Precio (USD): ${Number(coin.priceUsd).toFixed(2)}</p>
+         <p>Market Cap: ${Number(coin.marketCapUsd).toFixed(2)}</p>
+         <p>Volumen 24h: ${Number(coin.volumeUsd24Hr).toFixed(2)}</p>
+         <p>Cambio 24h: {Number(coin.changePercent24Hr).toFixed(2)}%</p>
+         <a href={coin.explorer}>{coin.name}</a>
+         <button onClick={handleFavoriteBtn}>
+            {favorite ? 'Eliminar de favoritos' : 'Añadir a favoritos'}
+         </button>
+      </>
+   )
+}
 export default Coins

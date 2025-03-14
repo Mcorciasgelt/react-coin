@@ -55,16 +55,20 @@ function Coins() {
    
    return (
       <>
-         <h1>{coin.name} ({coin.symbol})</h1>
-         <p>Rank: {coin.rank}</p>
-         <p>Precio (USD): ${Number(coin.priceUsd).toFixed(2)}</p>
-         <p>Market Cap: ${Number(coin.marketCapUsd).toFixed(2)}</p>
-         <p>Volumen 24h: ${Number(coin.volumeUsd24Hr).toFixed(2)}</p>
-         <p>Cambio 24h: {Number(coin.changePercent24Hr).toFixed(2)}%</p>
-         <a href={coin.explorer}>{coin.name}</a>
-         <button onClick={handleFavoriteBtn}>
-            {favorite ? 'Eliminar de favoritos' : 'Añadir a favoritos'}
-         </button>
+         <div className="crypto-info">
+            <h1>{coin.name} ({coin.symbol})</h1>
+            <p>Rank: {coin.rank}</p>
+            <p>Precio (USD): ${Number(coin.priceUsd).toFixed(2)}</p>
+            <p>Market Cap: ${Number(coin.marketCapUsd).toFixed(2)}</p>
+            <p>Volumen 24h: ${Number(coin.volumeUsd24Hr).toFixed(2)}</p>
+            <p>Cambio 24h: {Number(coin.changePercent24Hr).toFixed(2)}%</p>
+            <a href={coin.explorer}>{coin.name}</a>
+            <div className="favorite-btn">
+               <button onClick={handleFavoriteBtn}>
+                  {favorite ? 'Eliminar de favoritos' : 'Añadir a favoritos'}
+               </button>
+            </div>
+         </div>
       </>
    )
 }
